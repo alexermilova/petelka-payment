@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Оплата — Pételka</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #fdfdfd;
+      color: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: #fff;
+      padding: 24px 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      max-width: 430px;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      border: 2px solid #ffe6f0;
+    }
+
+    .logo img {
+      max-width: 220px;
+      height: auto;
+      margin-bottom: 12px;
+    }
+
+    .brand-name {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #ff6f97;
+    }
+
+    .field-group {
+      text-align: left;
+      margin-bottom: 14px;
+    }
+
+    .field-label {
+      font-size: 14px;
+      color: #777;
+      margin-bottom: 4px;
+    }
+
+    .copy-box {
+      background: #f4f8ff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s, transform 0.05s;
+      border: 1px solid #d8e6ff;
+    }
+
+    .copy-box:hover {
+      background: #e9f1ff;
+    }
+
+    .copy-box:active {
+      transform: scale(0.98);
+    }
+
+    .copy-text {
+      font-size: 16px;
+      overflow-wrap: anywhere;
+    }
+
+    .copy-icon {
+      font-size: 13px;
+      opacity: 0.7;
+      margin-left: 8px;
+      white-space: nowrap;
+      color: #5e8bff;
+    }
+
+    .status {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #2e7d32;
+      opacity: 0;
+      transition: opacity 0.2s;
+      height: 16px;
+    }
+
+    .status.visible {
+      opacity: 1;
+    }
+
+    .note {
+      font-size: 12px;
+      color: #888;
+      margin-top: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <!-- ЛОГО -->
+    <div class="logo">
+      <img src="logo.png" alt="Pételka Logo">
+    </div>
+
+    <div class="brand-name">Handcrafted accessories</div>
+
+    <!-- Поля -->
+    <div class="field-group">
+      <div class="field-label">Имя</div>
+      <div class="copy-box" data-copy="Builova Aleksandra">
+        <div class="copy-text">Builova Aleksandra</div>
+        <div class="copy-icon">Скопировать</div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="field-label">Счёт</div>
+      <div class="copy-box" data-copy="GE11BG0000000539934913">
+        <div class="copy-text">GE11BG0000000539934913</div>
+        <div class="copy-icon">Скопировать</div>
+      </div>
+    </div>
+
+    <div class="status" id="copy-status"></div>
+
+    <div class="note">
+      Нажмите на поле, чтобы скопировать реквизит.
+    </div>
+  </div>
+
+  <script>
+    const boxes = document.querySelectorAll('.copy-box');
+    const status = document.getElementById('copy-status');
+    let timeoutId = null;
+
+    function showStatus(text) {
+      status.textContent = text;
+      status.classList.add('visible');
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        status.classList.remove('visible');
+      }, 1500);
+    }
+
+    async function copyText(text) {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const input = document.createElement('input');
+          input.value = text;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand('copy');
+          document.body.removeChild(input);
+        }
+        showStatus('Скопировано: ' + text);
+      } catch (e) {
+        showStatus('Не удалось скопировать :(');
+      }
+    }
+
+    boxes.forEach(box => {
+      box.addEventListener('click', () => {
+        const text = box.getAttribute('data-copy') || box.innerText.trim();
+        copyText(text);
+      });
+    });
+  </script>
+</body>
+</html>
